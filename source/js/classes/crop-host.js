@@ -35,6 +35,10 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
     var minCanvasDims=[100,100],
         maxCanvasDims=[300,300];
 
+    // Max dimensions
+    var maxHeight = null,
+        maxWidth = null;
+
     // Result Image size
     var resImgSize={w: 200, h: 200};
 
@@ -170,6 +174,25 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
       var ris = this.getResultImageSize();
       temp_canvas.width = ris.w;
       temp_canvas.height = ris.h;
+
+      if (theArea.getType() == 'rectangle') {
+        // If it's a rectangle, get the sizes from selection
+        ris = { h: theArea.getSize().h, w: theArea.getSize().w };
+
+        // If there are max dimensions, respect them
+        if (this.getMaxHeight() && ris.h > this.getMaxHeight()) {
+          var ratio = this.getMaxHeight() / ris.h;
+          ris.w = ris.w * ratio;
+          ris.h = ris.h * ratio;
+        }
+
+        if (this.getMaxWidth() && ris.w > this.getMaxWidth()) {
+          var ratio = this.getMaxWidth() / ris.w;
+          ris.w = ris.w * ratio;
+          ris.h = ris.h * ratio;
+        }
+      }
+
       var center = theArea.getCenterPoint();
       var retObj = {dataURI: null,
                     imageData: null};
@@ -341,6 +364,22 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
       }
 
       drawScene();
+    };
+
+    this.setMaxHeight=function(max) {
+      return maxHeight = max;
+    };
+
+    this.getMaxHeight=function() {
+      return maxHeight;
+    };
+
+    this.setMaxWidth=function(max) {
+      return maxWidth = max;
+    };
+
+    this.getMaxWidth=function() {
+      return maxWidth;
     };
 
     /* Life Cycle begins */
