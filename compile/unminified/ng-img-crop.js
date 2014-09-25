@@ -5,7 +5,7 @@
  * Copyright (c) 2014 Alex Kaul
  * License: MIT
  *
- * Generated at Tuesday, September 23rd, 2014, 7:36:02 PM
+ * Generated at Thursday, September 25th, 2014, 12:30:39 PM
  */
 (function() {
 'use strict';
@@ -979,11 +979,7 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
 
     this.getResultImage=function() {
       var temp_ctx, temp_canvas;
-      temp_canvas = angular.element('<canvas></canvas>')[0];
-      temp_ctx = temp_canvas.getContext('2d');
       var ris = this.getResultImageSize();
-      temp_canvas.width = ris.w;
-      temp_canvas.height = ris.h;
 
       if (theArea.getType() == 'rectangle') {
         // If it's a rectangle, get the sizes from selection
@@ -1002,6 +998,11 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
           ris.h = ris.h * ratio;
         }
       }
+
+      temp_canvas = angular.element('<canvas></canvas>')[0];
+      temp_ctx = temp_canvas.getContext('2d');
+      temp_canvas.width = ris.w;
+      temp_canvas.height = ris.h;
 
       var center = theArea.getCenterPoint();
       var retObj = {dataURI: null,
