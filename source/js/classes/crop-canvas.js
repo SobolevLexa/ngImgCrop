@@ -58,27 +58,30 @@ crop.factory('cropCanvas', [function () {
          * Fixes a bug which squash image vertically while drawing into canvas for some images.
          */
         var detectVerticalSquash = function (img, iw, ih) {
-            var canvas = document.createElement('canvas');
-            canvas.width = 1;
-            canvas.height = ih;
-            var ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            var data = ctx.getImageData(0, 0, 1, ih).data;
-            // search image edge pixel position in case it is squashed vertically.
-            var sy = 0;
-            var ey = ih;
-            var py = ih;
-            while (py > sy) {
-                var alpha = data[(py - 1) * 4 + 3];
-                if (alpha === 0) {
-                    ey = py;
-                } else {
-                    sy = py;
+            if(img!== null) {
+                var canvas = document.createElement('canvas');
+                canvas.width = 1;
+                canvas.height = ih;
+                var ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                var data = ctx.getImageData(0, 0, 1, ih).data;
+                // search image edge pixel position in case it is squashed vertically.
+                var sy = 0;
+                var ey = ih;
+                var py = ih;
+                while (py > sy) {
+                    var alpha = data[(py - 1) * 4 + 3];
+                    if (alpha === 0) {
+                        ey = py;
+                    } else {
+                        sy = py;
+                    }
+                    py = (ey + sy) >> 1;
                 }
-                py = (ey + sy) >> 1;
+                var ratio = (py / ih);
+                return (ratio === 0) ? 1 : ratio;
             }
-            var ratio = (py / ih);
-            return (ratio === 0) ? 1 : ratio;
+            return 1;
         };
 
         // Draw Filled Polygon
