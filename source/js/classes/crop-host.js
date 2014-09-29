@@ -253,8 +253,11 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
 
 
         this.getResultImage = function () {
+            var iw = 0, ih = 0;
+            if(image !== null) {
+                var iw = image.naturalWidth, ih = image.naturalHeight;
+            }
             var temp_ctx, temp_canvas,
-                iw = image.naturalWidth, ih = image.naturalHeight,
                 subsampled = detectSubsampling(image);
             if (subsampled) {
                 iw /= 2;
