@@ -35,19 +35,22 @@ crop.factory('cropCanvas', [function () {
          * In iOS, larger images than 2M pixels may be subsampled in rendering.
          */
         var detectSubsampling = function (img) {
-            var iw = img.naturalWidth, ih = img.naturalHeight;
-            if (iw * ih > 1024 * 1024) { // subsampling may happen over megapixel image
-                var canvas = document.createElement('canvas');
-                canvas.width = canvas.height = 1;
-                var ctx = canvas.getContext('2d');
-                ctx.drawImage(img, -iw + 1, 0);
-                // subsampled image becomes half smaller in rendering size.
-                // check alpha channel value to confirm image is covering edge pixel or not.
-                // if alpha value is 0 image is not covering, hence subsampled.
-                return ctx.getImageData(0, 0, 1, 1).data[3] === 0;
-            } else {
-                return false;
+            if (img !== null) {
+                var iw = img.naturalWidth, ih = img.naturalHeight;
+                if (iw * ih > 1024 * 1024) { // subsampling may happen over megapixel image
+                    var canvas = document.createElement('canvas');
+                    canvas.width = canvas.height = 1;
+                    var ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, -iw + 1, 0);
+                    // subsampled image becomes half smaller in rendering size.
+                    // check alpha channel value to confirm image is covering edge pixel or not.
+                    // if alpha value is 0 image is not covering, hence subsampled.
+                    return ctx.getImageData(0, 0, 1, 1).data[3] === 0;
+                } else {
+                    return false;
+                }
             }
+            return false;
         };
 
         /**
@@ -170,10 +173,10 @@ crop.factory('cropCanvas', [function () {
             // draw part of original image
             if (size.w > 0 && size.w > 0) {
                 ctx.drawImage(image,
-                    xLeft * xRatio*vertSquashRatio,
-                    yTop * yRatio*vertSquashRatio,
-                    size.w * xRatio*vertSquashRatio,
-                    size.h * yRatio*vertSquashRatio,
+                    xLeft * xRatio * vertSquashRatio,
+                    yTop * yRatio * vertSquashRatio,
+                    size.w * xRatio * vertSquashRatio,
+                    size.h * yRatio * vertSquashRatio,
                     xLeft, yTop, size.w, size.h);
             }
 

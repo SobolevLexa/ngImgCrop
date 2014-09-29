@@ -208,19 +208,23 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
          * In iOS, larger images than 2M pixels may be subsampled in rendering.
          */
         var detectSubsampling = function (img) {
-            var iw = img.naturalWidth, ih = img.naturalHeight;
-            if (iw * ih > 1024 * 1024) { // subsampling may happen over megapixel image
-                var canvas = document.createElement('canvas');
-                canvas.width = canvas.height = 1;
-                var ctx = canvas.getContext('2d');
-                ctx.drawImage(img, -iw + 1, 0);
-                // subsampled image becomes half smaller in rendering size.
-                // check alpha channel value to confirm image is covering edge pixel or not.
-                // if alpha value is 0 image is not covering, hence subsampled.
-                return ctx.getImageData(0, 0, 1, 1).data[3] === 0;
-            } else {
-                return false;
+            if (img !== null) {
+                var iw = img.naturalWidth, ih = img.naturalHeight;
+                if (iw * ih > 1024 * 1024) { // subsampling may happen over megapixel image
+                    var canvas = document.createElement('canvas');
+                    canvas.width = canvas.height = 1;
+                    var ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, -iw + 1, 0);
+                    // subsampled image becomes half smaller in rendering size.
+                    // check alpha channel value to confirm image is covering edge pixel or not.
+                    // if alpha value is 0 image is not covering, hence subsampled.
+                    return ctx.getImageData(0, 0, 1, 1).data[3] === 0;
+                } else {
+                    return false;
+                }
             }
+            return false;
+
         };
 
         /**
@@ -254,7 +258,7 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
 
         this.getResultImage = function () {
             var iw = 0, ih = 0;
-            if(image !== null) {
+            if (image !== null) {
                 var iw = image.naturalWidth, ih = image.naturalHeight;
             }
             var temp_ctx, temp_canvas,
@@ -264,7 +268,7 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
                 ih /= 2;
             }
             var ris = this.getResultImageSize(),
-            vertSquashRatio = detectVerticalSquash(image, iw, ih);
+                vertSquashRatio = detectVerticalSquash(image, iw, ih);
 
             if (theArea.getType() == 'rectangle') {
                 // If it's a rectangle, get the sizes from selection
@@ -296,10 +300,10 @@ crop.factory('cropHost', ['$document', 'cropAreaCircle', 'cropAreaSquare', 'crop
             };
             if (image !== null) {
                 temp_ctx.drawImage(image,
-                    (center.x - theArea.getSize().w / 2) * (iw / ctx.canvas.width)*vertSquashRatio,
-                    (center.y - theArea.getSize().h / 2) * (ih / ctx.canvas.height)*vertSquashRatio,
-                    theArea.getSize().w * (iw/ ctx.canvas.width)*vertSquashRatio,
-                    theArea.getSize().h * (ih / ctx.canvas.height)*vertSquashRatio,
+                    (center.x - theArea.getSize().w / 2) * (iw / ctx.canvas.width) * vertSquashRatio,
+                    (center.y - theArea.getSize().h / 2) * (ih / ctx.canvas.height) * vertSquashRatio,
+                    theArea.getSize().w * (iw / ctx.canvas.width) * vertSquashRatio,
+                    theArea.getSize().h * (ih / ctx.canvas.height) * vertSquashRatio,
                     0, 0, ris.w, ris.h);
                 retObj.dataURI = temp_canvas.toDataURL();
                 retObj.imageData = temp_canvas.getContext("2d").getImageData(0, 0, temp_canvas.width, temp_canvas.height);
